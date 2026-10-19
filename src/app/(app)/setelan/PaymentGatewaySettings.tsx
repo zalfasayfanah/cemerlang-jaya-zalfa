@@ -111,7 +111,7 @@ export function PaymentGatewaySettings({
           <div className="space-y-1">
             <span className="font-semibold text-text">Lingkungan API:</span>
             <p className="text-text-muted leading-relaxed">
-              Menggunakan <strong>Mayar API V2 Sandbox</strong> (<code>https://api.mayar.io/hl/v2</code>) untuk simulasi transaksi tanpa uang riil.
+              Menggunakan <strong>Mayar API V2 Sandbox</strong> (endpoint sandbox Mayar) untuk simulasi transaksi tanpa uang riil.
             </p>
           </div>
         </div>
