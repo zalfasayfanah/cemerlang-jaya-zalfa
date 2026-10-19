@@ -250,10 +250,14 @@ export type Database = {
       }
       invoices: {
         Row: {
+          dibayar_online_at: string | null
           diskon: number
           diterbitkan_at: string
           diterbitkan_oleh: string | null
           id: string
+          mayar_invoice_id: string | null
+          mayar_jumlah: number | null
+          mayar_link: string | null
           nomor: string
           status_bayar: string
           subtotal: number
@@ -262,10 +266,14 @@ export type Database = {
           work_order_id: string
         }
         Insert: {
+          dibayar_online_at?: string | null
           diskon?: number
           diterbitkan_at?: string
           diterbitkan_oleh?: string | null
           id?: string
+          mayar_invoice_id?: string | null
+          mayar_jumlah?: number | null
+          mayar_link?: string | null
           nomor: string
           status_bayar?: string
           subtotal: number
@@ -274,10 +282,14 @@ export type Database = {
           work_order_id: string
         }
         Update: {
+          dibayar_online_at?: string | null
           diskon?: number
           diterbitkan_at?: string
           diterbitkan_oleh?: string | null
           id?: string
+          mayar_invoice_id?: string | null
+          mayar_jumlah?: number | null
+          mayar_link?: string | null
           nomor?: string
           status_bayar?: string
           subtotal?: number
@@ -301,6 +313,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mayar_webhook_log: {
+        Row: {
+          created_at: string
+          event: string | null
+          id: number
+          mayar_id: string | null
+          payload: Json
+          pesan_error: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          event?: string | null
+          id?: never
+          mayar_id?: string | null
+          payload: Json
+          pesan_error?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          event?: string | null
+          id?: never
+          mayar_id?: string | null
+          payload?: Json
+          pesan_error?: string | null
+          status?: string
+        }
+        Relationships: []
       }
       mekanik: {
         Row: {
@@ -866,8 +908,21 @@ export type Database = {
         Args: { p_alasan: string; p_item: string; p_stok_fisik: number }
         Returns: undefined
       }
+      simpan_link_mayar: {
+        Args: {
+          p_invoice: string
+          p_mayar_invoice_id: string
+          p_mayar_jumlah: number
+          p_mayar_link: string
+        }
+        Returns: undefined
+      }
       tambah_item_tagihan: {
         Args: { p_item: string; p_jumlah: number; p_wo: string }
+        Returns: string
+      }
+      tandai_lunas_mayar: {
+        Args: { p_invoice?: string; p_mayar_invoice_id: string }
         Returns: string
       }
       terbitkan_invoice: { Args: { p_wo: string }; Returns: string }

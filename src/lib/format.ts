@@ -9,6 +9,15 @@ const fmtTanggal = new Intl.DateTimeFormat("id-ID", {
   timeZone: "Asia/Jakarta",
 });
 
+const fmtTanggalWaktu = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Asia/Jakarta",
+});
+
 /** 12500000 → "Rp12.500.000" */
 export function rupiah(nilai: number) {
   return `${nilai < 0 ? "-" : ""}Rp${fmtRupiah.format(Math.abs(nilai))}`;
@@ -22,4 +31,9 @@ export function rupiahRingkas(nilai: number) {
 /** "2026-10-07T03:00:00Z" atau "2026-10-07" → "7 Okt 2026" */
 export function tanggal(iso: string) {
   return fmtTanggal.format(new Date(iso));
+}
+
+/** "2026-10-07T03:00:00Z" → "7 Okt 2026, 10.00 WIB" */
+export function tanggalWaktu(iso: string) {
+  return `${fmtTanggalWaktu.format(new Date(iso))} WIB`;
 }

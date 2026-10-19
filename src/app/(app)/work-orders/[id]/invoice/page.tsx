@@ -12,9 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { rupiah, tanggal } from "@/lib/format";
+import { rupiah, tanggal, tanggalWaktu } from "@/lib/format";
 import { ambilProfilSaya } from "@/lib/profil";
 import { createClient } from "@/lib/supabase/server";
+import { TombolBayarOnline } from "./TombolBayarOnline";
 import { TombolCetak } from "./TombolCetak";
 
 export default async function InvoiceWorkOrder({
@@ -23,7 +24,8 @@ export default async function InvoiceWorkOrder({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  await ambilProfilSaya();
+  const profil = await ambilProfilSaya();
+  const bolehBayar = profil.peran === "admin" || profil.peran === "owner";
   const supabase = await createClient();
 
   // 1. Ambil data Work Order dan Invoice
@@ -44,6 +46,7 @@ export default async function InvoiceWorkOrder({
         total,
         terbayar,
         status_bayar,
+        dibayar_online_at,
         diterbitkan_at,
         diterbitkan_oleh:profiles (nama)
       )
@@ -130,7 +133,14 @@ export default async function InvoiceWorkOrder({
   return (
     <div className="space-y-6">
       {/* Tombol Cetak / Navigasi (disembunyikan saat mencetak) */}
-      <TombolCetak workOrderId={id} />
+      <TombolCetak workOrderId={id}>
+        <TombolBayarOnline
+          invoiceId={invoice.id}
+          initialStatusBayar={invoice.status_bayar}
+          initialDibayarOnlineAt={invoice.dibayar_online_at}
+          bolehBayar={bolehBayar}
+        />
+      </TombolCetak>
 
       {/* Lembar Invoice Cetak A4 */}
       <div className="mx-auto max-w-4xl rounded-xl border bg-card p-8 md:p-12 shadow-sm text-text print:border-none print:shadow-none print:p-0 print:max-w-none">
@@ -162,7 +172,7 @@ export default async function InvoiceWorkOrder({
             <p className="text-xs text-text-muted">
               Tanggal: {tanggal(invoice.diterbitkan_at)}
             </p>
-            <div className="pt-1">
+            <div className="pt-1 flex flex-col items-end">
               <Badge
                 variant={
                   invoice.status_bayar === "lunas"
@@ -185,6 +195,11 @@ export default async function InvoiceWorkOrder({
                     ? "DIBAYAR SEBAGIAN"
                     : "BELUM BAYAR"}
               </Badge>
+              {invoice.dibayar_online_at && (
+                <p className="text-[11px] text-text-muted mt-1.5">
+                  Dibayar online: {tanggalWaktu(invoice.dibayar_online_at)}
+                </p>
+              )}
             </div>
           </div>
         </div>
